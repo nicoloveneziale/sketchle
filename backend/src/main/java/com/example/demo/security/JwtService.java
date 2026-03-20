@@ -13,7 +13,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     
-    private static final String SECRET_KEY = "Secret123";
+    private static final String SECRET_KEY = "ThisSuperSecretKeyForSketchleThatIsAtLeast32CharactersLong!";
 
     public String generateToken(String username) {
         return Jwts.builder()
