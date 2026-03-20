@@ -18,7 +18,7 @@ public class Drawing {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "theme_id", nullable = false)
+    @JoinColumn(name = "theme_date", referencedColumnName = "date")
     private DailyTheme theme;
 
     @Column(nullable = false)

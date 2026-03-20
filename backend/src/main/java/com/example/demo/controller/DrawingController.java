@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/drawings")
@@ -32,6 +33,26 @@ public class DrawingController {
         this.themeRepository = themeRepository;
         this.storageService = storageService;
     }
+
+    @GetMapping("/today")
+    public ResponseEntity<?> getTodaysDrawings() {
+        try {
+            LocalDate today = LocalDate.now();
+
+            System.out.println(today);
+            
+            List<Drawing> drawings = drawingRepository.findByThemeDateOrderBySubmittedAtDesc(today);
+
+            if (drawings.isEmpty()) {
+                return ResponseEntity.ok("No drawings found for today's theme yet.");
+            }
+
+            return ResponseEntity.ok(drawings);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+    
 
     @PostMapping("/submit")
     public ResponseEntity<?> submitDrawing(@RequestBody DrawingRequest request, Authentication authentication) {
