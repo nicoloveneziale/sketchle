@@ -66,6 +66,22 @@ public class DrawingController {
         return ResponseEntity.internalServerError().body("Error fetching user posts: " + e.getMessage());
         }
     }
+
+    @DeleteMapping("/{drawingId}")
+    public ResponseEntity<?> deleteDrawing(@PathVariable Long drawingId, Authentication authentication) {
+        try {
+            Drawing drawing = drawingRepository.findById(drawingId).orElseThrow(() -> new RuntimeException("Drawing not found"));
+
+            String username = authentication.getName();
+            if (!drawing.getUser().getUsername().equals(username)) {
+                return ResponseEntity.status(403).body("You are not authorized to delete this drawing");
+            }
+            drawingRepository.delete(drawing);
+            return ResponseEntity.ok("Drawing deleted successfully");
+        } catch (Exception e) {
+        return ResponseEntity.internalServerError().body("Delete failed: " + e.getMessage());
+    }
+    }
     
 
     @PostMapping("/submit")
