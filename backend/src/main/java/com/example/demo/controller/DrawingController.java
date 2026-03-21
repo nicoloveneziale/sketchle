@@ -52,6 +52,20 @@ public class DrawingController {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
     }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<?> getUserDrawings(@PathVariable String username) {
+        try {
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User " + username + " cannot be found"));
+
+            List<Drawing> usaeDrawings = drawingRepository.findByUserOrderBySubmittedAtDesc(user);
+            return ResponseEntity.ok(usaeDrawings);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+        return ResponseEntity.internalServerError().body("Error fetching user posts: " + e.getMessage());
+        }
+    }
     
 
     @PostMapping("/submit")
