@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "drawings")
@@ -23,6 +26,14 @@ public class Drawing {
 
     @Column(nullable = false)
     private String drawingUrl;
+
+    @OneToMany(mappedBy = "drawing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore 
+    private List<DrawingLike> likes;
+
+    public int getLikesCount() {
+    return (likes != null) ? likes.size() : 0;
+    }
 
    private LocalDateTime submittedAt = LocalDateTime.now();
 

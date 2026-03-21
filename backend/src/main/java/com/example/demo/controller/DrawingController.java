@@ -2,12 +2,16 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.DrawingRequest;
 import com.example.demo.model.Drawing;
+import com.example.demo.model.DrawingLike;
 import com.example.demo.model.User;
 import com.example.demo.model.DailyTheme;
 import com.example.demo.repository.DrawingRepository;
+import com.example.demo.repository.LikeRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.ThemeRepository;
 import com.example.demo.service.SupabaseStorageService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/drawings")
@@ -114,4 +119,28 @@ public class DrawingController {
             return ResponseEntity.internalServerError().body("Error processing drawing: " + e.getMessage());
         }
     }
+
+    @Autowired
+    private LikeRepository likeRepository;
+
+    @PostMapping("/{drawingId}/like")
+    public ResponseEntity<?> toggleLike(@PathVariable Long drawingId, Authentication authentication) {
+    try {
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+        
+        Drawing drawing = drawingRepository.findById(drawingId).orElseThrow(() -> new RuntimeException("Drawing not found"));
+
+        Optional<DrawingLike> existingLike = likeRepository.findByUserAndDrawing(user, drawing);
+
+        if (existingLike.isPresent()) {
+            likeRepository.delete(existingLike.get());
+            return ResponseEntity.ok("Unliked");
+        } else {
+            likeRepository.save(new DrawingLike(user, drawing));
+            return ResponseEntity.ok("Liked");
+        }
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body(e.getMessage());
+    }
+}
 }

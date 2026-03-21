@@ -55,11 +55,15 @@ public class SupabaseStorageService {
                 .addBinaryBody("file", imageBytes, ContentType.IMAGE_PNG, fileName)
                 .build());
         httpClient.execute(uploadRequest, response -> {
-            if (response.getCode() >= 300) {
-                throw new IOException("Supabase upload failed with code: " + response.getCode());
-            }
-            return null; 
-        });
+        if (response.getCode() >= 300) {
+            String errorBody = org.apache.hc.core5.http.io.entity.EntityUtils.toString(response.getEntity());
+            System.err.println("--- SUPABASE  ERROR ---");
+            System.err.println("Status Code: " + response.getCode());
+            System.err.println("Error Message: " + errorBody);
+            throw new IOException("Supabase upload failed: " + errorBody);
+        }
+        return null; 
+});
     }
 
     return supabaseUrl + "/storage/v1/object/public/drawings/" + fileName;
