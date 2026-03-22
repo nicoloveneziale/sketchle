@@ -10,6 +10,7 @@ import { AuthProvider } from './context/AuthContext';
 // Routes
 import Root from "./routes/root";
 import Register from './routes/register';
+import Login from './routes/login';
 
 // Router object, dictates paths for each route
 const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <Register/>
+      },
+      {
+        path: "login",
+        element: <Login/>
       }
     ]
   }
