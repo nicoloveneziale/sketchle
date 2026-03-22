@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -23,9 +24,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegistrationRequest request) {
+    public ResponseEntity<LoginResponse> register(@RequestBody RegistrationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            return ResponseEntity.badRequest().body("Username already taken");
+            return ResponseEntity.badRequest().build();
         }
 
         User user = new User();
@@ -33,7 +34,8 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
-        return ResponseEntity.ok("User registered succesfully");
+        String token = jwtService.generateToken(user.getUsername());
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 
     @PostMapping("login") 
