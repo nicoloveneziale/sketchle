@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Import your global auth state
+import { useAuth } from "../context/AuthContext"; 
 import { 
     FaUserPlus, 
     FaSignInAlt, 
@@ -8,10 +8,9 @@ import {
 } from "react-icons/fa";
 
 export default function Root() {
-    const { token, logout } = useAuth(); // Get the token and logout function
+    const { token, logout } = useAuth(); 
     const navigate = useNavigate();
 
-    // Helper function to handle logout and redirect home
     const handleLogout = () => {
         logout();
         navigate("/");

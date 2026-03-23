@@ -11,6 +11,7 @@ import { AuthProvider } from './context/AuthContext';
 import Root from "./routes/root";
 import Register from './routes/register';
 import Login from './routes/login';
+import Home from './routes/home';
 
 // Router object, dictates paths for each route
 const router = createBrowserRouter([
@@ -19,13 +20,17 @@ const router = createBrowserRouter([
     element: <Root/>,
     children: [
       {
+        index: "true",
+        element: <Home/>
+      },
+      {
         path: "register",
         element: <Register/>
       },
       {
         path: "login",
         element: <Login/>
-      }
+      },
     ]
   }
 ])
