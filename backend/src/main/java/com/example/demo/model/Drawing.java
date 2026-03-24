@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.hibernate.annotations.Formula;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -31,9 +32,8 @@ public class Drawing {
     @JsonIgnore 
     private List<DrawingLike> likes;
 
-    public int getLikesCount() {
-    return (likes != null) ? likes.size() : 0;
-    }
+    @Formula("(SELECT COUNT(*) FROM drawing_likes dl WHERE dl.drawing_id = id)")
+    private int likesCount;
 
    private LocalDateTime submittedAt = LocalDateTime.now();
 

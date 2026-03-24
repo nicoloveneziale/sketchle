@@ -25,13 +25,10 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
             http
-                // 1. Enable CORS and disable CSRF
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
                 .csrf(csrf -> csrf.disable()) 
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/drawings/today").permitAll()
-                    .requestMatchers("/api/auth/**").permitAll() 
-                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS) 

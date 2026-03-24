@@ -12,9 +12,13 @@ import com.example.demo.repository.ThemeRepository;
 import com.example.demo.service.SupabaseStorageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,7 +27,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/drawings")
-@CrossOrigin(origins = "http://localhost:5173")
 public class DrawingController {
 
     private final DrawingRepository drawingRepository;
@@ -40,20 +43,23 @@ public class DrawingController {
         this.storageService = storageService;
     }
 
+    @GetMapping("/top")
+        public List<Drawing> getTopDrawings() {
+        return drawingRepository.findTop10ByThemeDate(LocalDate.now());
+    }
+
     @GetMapping("/today")
-    public ResponseEntity<?> getTodaysDrawings() {
+    public ResponseEntity<?> getTodaysDrawings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
         try {
             LocalDate today = LocalDate.now();
+            Pageable pageable = PageRequest.of(page, size, Sort.by("submittedAt").descending());
+            Page<Drawing> drawingPage = drawingRepository.findByThemeDate(today, pageable);
 
-            System.out.println(today);
-            
-            List<Drawing> drawings = drawingRepository.findByThemeDateOrderBySubmittedAtDesc(today);
-
-            if (drawings.isEmpty()) {
+            if (drawingPage.isEmpty()) {
                 return ResponseEntity.ok("No drawings found for today's theme yet.");
             }
 
-            return ResponseEntity.ok(drawings);
+            return ResponseEntity.ok(drawingPage);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }

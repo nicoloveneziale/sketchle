@@ -4,22 +4,30 @@ import { FaHeart, FaUserAlt, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
+    // States for temporary storage of this page
     const [drawings, setDrawings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [topDrawings, setTopDrawings] = useState([]);
+
+    // Verification token carried across the site
     const { token } = useAuth()
 
+    // This runs every time the page is reloaded/loaded
     useEffect(() => {
         const fetchDrawings = async () => {
             try {
-                const response = await api.get("/drawings/today"); 
-                
-                if (typeof response.data === "string") {
-                    setDrawings([]);
-                } else {
-                    setDrawings(response.data);
+                const [todayRes, topRes] = await Promise.all([api.get("/drawings/today"), api.get("/drawings/top")]); // Gets the drawings and top 10 from the backend
+
+                if (todayRes.data && Array.isArray(todayRes.data.content)) {
+                    setDrawings(todayRes.data.content); // Response data from the server contains the data
                 }
-                console.log(response.data)
+
+                if (Array.isArray(topRes.data)) {
+                    setTopDrawings(topRes.data);
+                }
+                
+                console.log(todayRes.data)
             } catch (err) {
                 setError("Could not load today's gallery.");
                 console.error(err);
@@ -31,15 +39,18 @@ export default function Home() {
         fetchDrawings();
     }, []);
 
+
+
+    // This runs every time the like button is pressed
     const handleLike = async (drawingId) => {
-        if (!token) return; 
+        if (!token) return; // If user is not logged in they cannot like
         try {
-            await api.post(`/drawings/${drawingId}/like`, {}, { 
+            await api.post(`/drawings/${drawingId}/like`, {}, { // Asks the backend to like the post
             headers: {
-                Authorization: `Bearer ${token}` 
+                Authorization: `Bearer ${token}` // Verification token so we can track who liked the post
             }
             });
-            
+            // Adds the like to the previous group of drawing objects
             setDrawings(prevDrawings => 
                 prevDrawings.map(drawing => {
                     if (drawing.id === drawingId) {
@@ -47,7 +58,7 @@ export default function Home() {
                         return {
                             ...drawing,
                             likedByUser: !alreadyLiked,
-                            likesCount: alreadyLiked ? drawing.likesCount - 1 : drawing.likesCount + 1
+                            likesCount: alreadyLiked ? drawing.likesCount - 1 : drawing.likesCount + 1 // If user had already liked , it is then unliked
                         };
                     }
                     return drawing;
@@ -58,6 +69,7 @@ export default function Home() {
         }
     };
 
+    // Loading screen
     if (isLoading) return (
         <div className="flex justify-center items-center h-64 text-indigo-600 font-medium">
             <div className="animate-pulse">Loading Today's Masterpieces...</div>
@@ -74,6 +86,44 @@ export default function Home() {
             </header>
 
             {error && <p className="text-red-500 text-center bg-red-50 p-4 rounded-lg">{error}</p>}
+
+            {/* Leaderboard Section */}
+            {topDrawings.length > 0 && (
+                <section className="mb-16">
+                    <div className="flex items-center space-x-3 mb-6">
+                        <div className="bg-yellow-100 p-2 rounded-lg">🏆</div>
+                        <h2 className="text-2xl font-bold text-gray-800">Today's Top 10</h2>
+                    </div>
+                    
+                    <div className="flex space-x-6 overflow-x-auto pb-6 scrollbar-hide">
+                        {topDrawings.map((drawing, index) => (
+                            <div key={drawing.id} className="flex-shrink-0 w-40 group">
+                                <div className="relative">
+                                    {/* Rank Badge */}
+                                    <div className="absolute -top-2 -left-2 z-10 bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center font-bold text-indigo-600 border border-indigo-100">
+                                        {index + 1}
+                                    </div>
+                                    
+                                    <div className="aspect-square rounded-2xl overflow-hidden border-2 border-transparent group-hover:border-indigo-500 transition-all">
+                                        <img 
+                                            src={drawing.drawingUrl} 
+                                            alt="Top sketch" 
+                                            className="object-cover w-full h-full"
+                                        />
+                                    </div>
+                                </div>
+                                <p className="mt-2 text-sm font-semibold text-gray-700 truncate text-center">
+                                    {drawing.user.username}
+                                </p>
+                                <div className="flex justify-center items-center text-pink-500 text-xs font-bold">
+                                    <FaHeart className="mr-1" size={10} /> {drawing.likesCount}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <hr className="border-gray-200 mt-4" />
+                </section>
+            )}
 
             {drawings.length === 0 ? (
                 <div className="text-center py-20 bg-white/50 rounded-3xl border-2 border-dashed border-gray-300">
@@ -92,6 +142,7 @@ export default function Home() {
                                 <img 
                                     src={drawing.drawingUrl} 
                                     alt="Sketch" 
+                                    loading="lazy"
                                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
                                 />
                                 {/* Subtle overlay on hover */}
