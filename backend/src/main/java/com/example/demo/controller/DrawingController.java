@@ -49,16 +49,21 @@ public class DrawingController {
     }
 
     @GetMapping("/today")
-    public ResponseEntity<?> getTodaysDrawings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
+    public ResponseEntity<?> getTodaysDrawings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size, Authentication authentication) {
         try {
             LocalDate today = LocalDate.now();
             Pageable pageable = PageRequest.of(page, size, Sort.by("submittedAt").descending());
             Page<Drawing> drawingPage = drawingRepository.findByThemeDate(today, pageable);
 
-            if (drawingPage.isEmpty()) {
-                return ResponseEntity.ok("No drawings found for today's theme yet.");
+            if (authentication != null && authentication.isAuthenticated()) {
+                User currentUser = userRepository.findByUsername(authentication.getName()).orElse(null);
+                if (currentUser != null) {
+                    drawingPage.forEach(drawing -> {
+                    boolean liked = likeRepository.existsByUserAndDrawing(currentUser, drawing);
+                    drawing.setLikedByUser(liked); 
+                    });
+                }
             }
-
             return ResponseEntity.ok(drawingPage);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());

@@ -32,6 +32,17 @@ public class Drawing {
     @JsonIgnore 
     private List<DrawingLike> likes;
 
+    @Transient
+    private boolean likedByUser;
+
+    public boolean isLikedByUser() {
+        return likedByUser;
+    }
+
+    public void setLikedByUser(boolean likedByUser) {
+        this.likedByUser = likedByUser;
+    }
+
     @Formula("(SELECT COUNT(*) FROM drawing_likes dl WHERE dl.drawing_id = id)")
     private int likesCount;
 

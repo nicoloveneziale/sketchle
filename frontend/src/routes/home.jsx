@@ -17,7 +17,8 @@ export default function Home() {
     useEffect(() => {
         const fetchDrawings = async () => {
             try {
-                const [todayRes, topRes] = await Promise.all([api.get("/drawings/today"), api.get("/drawings/top")]); // Gets the drawings and top 10 from the backend
+                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+                const [todayRes, topRes] = await Promise.all([api.get("/drawings/today", config), api.get("/drawings/top", config)]); // Gets the drawings and top 10 from the backend
 
                 if (todayRes.data && Array.isArray(todayRes.data.content)) {
                     setDrawings(todayRes.data.content); // Response data from the server contains the data
@@ -45,15 +46,10 @@ export default function Home() {
     const handleLike = async (drawingId) => {
         if (!token) return; // If user is not logged in they cannot like
         try {
-            await api.post(`/drawings/${drawingId}/like`, {}, { // Asks the backend to like the post
-            headers: {
-                Authorization: `Bearer ${token}` // Verification token so we can track who liked the post
-            }
-            });
-            // Adds the like to the previous group of drawing objects
             setDrawings(prevDrawings => 
                 prevDrawings.map(drawing => {
                     if (drawing.id === drawingId) {
+                        console.log(drawing);
                         const alreadyLiked = drawing.likedByUser;
                         return {
                             ...drawing,
@@ -64,6 +60,11 @@ export default function Home() {
                     return drawing;
                 })
             );
+            await api.post(`/drawings/${drawingId}/like`, {}, { // Asks the backend to like the post
+            headers: {
+                Authorization: `Bearer ${token}` // Verification token so we can track who liked the post
+            }
+            });
         } catch (err) {
             console.error("Error toggling like:", err);
         }
@@ -113,7 +114,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <p className="mt-2 text-sm font-semibold text-gray-700 truncate text-center">
-                                    {drawing.user.username}
+                                  {drawing.user.username}
                                 </p>
                                 <div className="flex justify-center items-center text-pink-500 text-xs font-bold">
                                     <FaHeart className="mr-1" size={10} /> {drawing.likesCount}
@@ -141,7 +142,7 @@ export default function Home() {
                             <div className="aspect-square bg-gray-50 overflow-hidden relative">
                                 <img 
                                     src={drawing.drawingUrl} 
-                                    alt="Sketch" 
+                                      alt="Sketch" 
                                     loading="lazy"
                                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
                                 />
