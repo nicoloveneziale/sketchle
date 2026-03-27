@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.DrawingRequest;
 import com.example.demo.model.Drawing;
 import com.example.demo.model.DrawingLike;
 import com.example.demo.model.User;
@@ -101,8 +100,10 @@ public class DrawingController {
     }
     
 
-    @PostMapping("/submit")
-    public ResponseEntity<?> submitDrawing(@RequestBody DrawingRequest request, Authentication authentication) {
+    @PostMapping(value = "/submit", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> submitDrawing(
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file, 
+            Authentication authentication) {
         try {
             String username = authentication.getName();
             User user = userRepository.findByUsername(username)
@@ -115,20 +116,23 @@ public class DrawingController {
                 return ResponseEntity.badRequest().body("No theme found for today!");
             }
 
-            String imageUrl = storageService.uploadDrawing(request.getPixelData(), username);
+            byte[] imageBytes = file.getBytes();
+            String imageUrl = storageService.uploadDrawing(imageBytes, username);
 
             Drawing drawing = new Drawing();
             drawing.setUser(user);
             drawing.setTheme(theme);
             drawing.setDrawingUrl(imageUrl);
             drawing.setSubmittedAt(LocalDateTime.now());
+            
+            drawing.setLikesCount(0); 
 
             drawingRepository.save(drawing);
 
-            return ResponseEntity.ok("Drawing uploaded to Supabase! URL: " + imageUrl);
+            return ResponseEntity.ok("Drawing uploaded successfully! URL: " + imageUrl);
 
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Error processing drawing: " + e.getMessage());
+            return ResponseEntity.internalServerError().body("Error processing upload: " + e.getMessage());
         }
     }
 

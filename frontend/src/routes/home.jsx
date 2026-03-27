@@ -144,10 +144,9 @@ export default function Home() {
                                     src={drawing.drawingUrl} 
                                       alt="Sketch" 
                                     loading="lazy"
-                                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700"
+                                    className="object-cover w-full h-full"
                                 />
-                                {/* Subtle overlay on hover */}
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
+                           
                             </div>
 
                             {/* Footer Information */}
