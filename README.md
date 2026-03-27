@@ -12,7 +12,8 @@ Navigate to the /backend folder.
 
 Open src/main/resources/application.properties and fill in your Supabase credentials:
 
-Propertiessupabase.url=your_project_url
+Properties
+supabase.url=your_project_url
 supabase.key=your_anon_key
 spring.datasource.url=your_postgres_url
 
@@ -20,7 +21,7 @@ Run the application:
 
 ./mvnw spring-boot:run
 
-The server will start at http://localhost:8080.2.
+The server will start at http://localhost:8080
 
 Web Gallery (React)
 Navigate to the /frontend folder.
@@ -32,4 +33,4 @@ Start the development server:
 
 npm run dev
 
-The site will be available at http://localhost:5173.
+The site will be available at http://localhost:5173
