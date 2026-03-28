@@ -60,7 +60,8 @@ Authentication: Required (Authorization: Bearer <JWT_TOKEN>)
 Key: file
 Value: The raw binary data of the image (PNG format recommended)
 CPR??? 
-cpr::Response r = cpr::Post( cpr::Url{"http://localhost:8080/api/drawings/submit"}, cpr::Header{{"Authorization", "Bearer " + jwt_token}}, 
+cpr::Response r = cpr::Post( cpr::Url{"http://localhost:8080/api/drawings/submit"}
+cpr::Header{{"Authorization", "Bearer " + jwt_token}}, 
 cpr::Multipart{ {"file", cpr::Buffer{png_data.begin(), png_data.end(), "drawing.png"}} } );
 Response (200 OK):
 Plaintext
