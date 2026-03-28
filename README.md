@@ -29,6 +29,43 @@ Install dependencies:
 
 npm install
 
+-----ROUTES FOR C++ APP-----
+
+Login:
+POST /api/auth/login
+Request Body (JSON):
+JSON
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+Success Response: 200 OK
+JSON
+{ "token": "eyJhbG..." }
+
+Todays Theme:
+Endpoint: GET /api/theme/daily
+Authentication: Not required (Public)
+Success Response: 200 OK
+JSON
+{
+  "date": "2026-03-26",
+  "word": "Cat"
+}
+
+Today's Submission:
+Endpoint: POST /api/drawings/submit
+Content-Type: multipart/form-data
+Authentication: Required (Authorization: Bearer <JWT_TOKEN>)
+Key: file
+Value: The raw binary data of the image (PNG format recommended)
+CPR??? 
+cpr::Response r = cpr::Post( cpr::Url{"http://localhost:8080/api/drawings/submit"}, cpr::Header{{"Authorization", "Bearer " + jwt_token}}, 
+cpr::Multipart{ {"file", cpr::Buffer{png_data.begin(), png_data.end(), "drawing.png"}} } );
+Response (200 OK):
+Plaintext
+Drawing uploaded successfully! URL: https://[supabase-url]/.../image.png
+
 Start the development server:
 
 npm run dev
