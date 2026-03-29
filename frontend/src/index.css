@@ -1,1 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700;900&family=Syne:wght@700;800&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-background: #020617; 
+  --color-accent: #6366f1;     
+  
+  --font-brutal: "Space Grotesk", sans-serif;
+  --font-display: "Syne", sans-serif;
+  
+  --shadow-indigo-glow: 0 0 25px -5px rgba(99, 102, 241, 0.4);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+
+  @keyframes moveGalaxy {
+    from { background-position: 0 0; }
+    to { background-position: 1000px 1000px; }
+  }
+}
+
+@layer utilities {
+  .brutal-text {
+    @apply font-display font-extrabold uppercase tracking-tighter italic;
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400;
+  }
+}
+
+html, body {
+  background-color: #020617;
+  color: #f8fafc;
+  font-family: var(--font-brutal);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+#tsparticles {
+  position: absolute !important;
+  inset: 0;
+  z-index: 0 !important;
+}
+
+#tsparticles {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1 !important; 
+  pointer-events: none;
+}
+
+.relative {
+  position: relative;
+}
+
+@utility scanlines {
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 0, 0, 0.15) 51%
+  );
+  background-size: 100% 4px; 
+  pointer-events: none;
+}

@@ -2,33 +2,37 @@ import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { FaHeart, FaUserAlt, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 
 export default function Home() {
-    // States for temporary storage of this page
     const [drawings, setDrawings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [topDrawings, setTopDrawings] = useState([]);
+    const [theme, setTheme] = useState("");
+    const { token } = useAuth();
 
-    // Verification token carried across the site
-    const { token } = useAuth()
-
-    // This runs every time the page is reloaded/loaded
     useEffect(() => {
         const fetchDrawings = async () => {
             try {
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const [todayRes, topRes] = await Promise.all([api.get("/drawings/today", config), api.get("/drawings/top", config)]); // Gets the drawings and top 10 from the backend
+                const [todayRes, topRes, themeRes] = await Promise.all([
+                    api.get("/drawings/today", config), 
+                    api.get("/drawings/top", config), 
+                    api.get("/theme/daily")
+                ]);
+
+                if (themeRes.data) {
+                    setTheme(themeRes.data.word);
+                }
 
                 if (todayRes.data && Array.isArray(todayRes.data.content)) {
-                    setDrawings(todayRes.data.content); // Response data from the server contains the data
+                    setDrawings(todayRes.data.content);
                 }
 
                 if (Array.isArray(topRes.data)) {
                     setTopDrawings(topRes.data);
                 }
-                
-                console.log(todayRes.data)
             } catch (err) {
                 setError("Could not load today's gallery.");
                 console.error(err);
@@ -38,140 +42,151 @@ export default function Home() {
         };
 
         fetchDrawings();
-    }, []);
+    }, [token]);
 
-
-
-    // This runs every time the like button is pressed
     const handleLike = async (drawingId) => {
-        if (!token) return; // If user is not logged in they cannot like
+        if (!token) return;
         try {
             setDrawings(prevDrawings => 
                 prevDrawings.map(drawing => {
                     if (drawing.id === drawingId) {
-                        console.log(drawing);
                         const alreadyLiked = drawing.likedByUser;
                         return {
                             ...drawing,
                             likedByUser: !alreadyLiked,
-                            likesCount: alreadyLiked ? drawing.likesCount - 1 : drawing.likesCount + 1 // If user had already liked , it is then unliked
+                            likesCount: alreadyLiked ? drawing.likesCount - 1 : drawing.likesCount + 1
                         };
                     }
                     return drawing;
                 })
             );
-            await api.post(`/drawings/${drawingId}/like`, {}, { // Asks the backend to like the post
-            headers: {
-                Authorization: `Bearer ${token}` // Verification token so we can track who liked the post
-            }
+            await api.post(`/drawings/${drawingId}/like`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
             });
         } catch (err) {
             console.error("Error toggling like:", err);
         }
     };
 
-    // Loading screen
     if (isLoading) return (
         <div className="flex justify-center items-center h-64 text-indigo-600 font-medium">
-            <div className="animate-pulse">Loading Today's Masterpieces...</div>
+            <div className="animate-pulse brutal-text tracking-widest">LOADING GALLERY...</div>
         </div>
     );
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-10">
-            <header className="mb-10 text-center">
-                <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-                    Today's Gallery
+        <div className="max-w-7xl mx-auto px-4 py-10 brutal-text">
+            {/* Header  */}
+            <header className="mb-10 text-center glass border-b border-white/5 rounded-2xl shadow-xl w-full p-6">
+                <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+                    Today's Theme
                 </h1>
-                <p className="text-gray-500 mt-2 italic">Fresh sketches from the community</p>
+                <h1 className="text-7xl font-extrabold text-white mt-2 uppercase tracking-tighter">
+                    {theme}
+                </h1>
+                <p className="text-gray-400 mt-2 italic">Fresh sketches from the community</p>
             </header>
 
-            {error && <p className="text-red-500 text-center bg-red-50 p-4 rounded-lg">{error}</p>}
+            {error && <p className="text-red-500 text-center glass border-red-500/20 p-4 rounded-lg">{error}</p>}
 
             {/* Leaderboard Section */}
             {topDrawings.length > 0 && (
                 <section className="mb-16">
-                    <div className="flex items-center space-x-3 mb-6">
-                        <div className="bg-yellow-100 p-2 rounded-lg">🏆</div>
-                        <h2 className="text-2xl font-bold text-gray-800">Today's Top 10</h2>
+                    <div className="flex items-center space-x-3 mb-8 glass rounded-2xl p-4 border border-white/10">
+                        <div className="bg-yellow-500/20 p-2 rounded-lg text-xl">🏆</div>
+                        <h2 className="text-2xl font-black uppercase italic tracking-tight text-white">Today's Top 10</h2>
                     </div>
                     
-                    <div className="flex space-x-6 overflow-x-auto pb-6 scrollbar-hide">
+                    <div className="flex flex-wrap gap-8 lg:justify-start">
                         {topDrawings.map((drawing, index) => (
-                            <div key={drawing.id} className="flex-shrink-0 w-40 group">
+                            <div key={drawing.id} className="w-40 group">
                                 <div className="relative">
-                                    {/* Rank Badge */}
-                                    <div className="absolute -top-2 -left-2 z-10 bg-white shadow-md rounded-full w-8 h-8 flex items-center justify-center font-bold text-indigo-600 border border-indigo-100">
+                                    <div className="absolute -top-2 -left-2 z-10 bg-indigo-600 text-white shadow-xl rounded-full w-8 h-8 flex items-center justify-center font-black border-2 border-[#020617] text-sm">
                                         {index + 1}
                                     </div>
                                     
-                                    <div className="aspect-square rounded-2xl overflow-hidden border-2 border-transparent group-hover:border-indigo-500 transition-all">
+                                    <div className="aspect-square rounded-2xl overflow-hidden border-2 border-white/10 glass transition-colors group-hover:border-indigo-500">
                                         <img 
                                             src={drawing.drawingUrl} 
                                             alt="Top sketch" 
-                                            className="object-cover w-full h-full"
+                                            className="object-cover w-full h-full pixelated"
                                         />
                                     </div>
                                 </div>
-                                <p className="mt-2 text-sm font-semibold text-gray-700 truncate text-center">
+                                <p className={`mt-3 text-xs font-black uppercase tracking-widest truncate text-center ${
+                                    index === 0 ? "text-yellow-400" :
+                                    index === 1 ? "text-slate-300" :
+                                    index === 2 ? "text-amber-600" :
+                                    "text-white"
+                                } `}>
                                   {drawing.user.username}
                                 </p>
-                                <div className="flex justify-center items-center text-pink-500 text-xs font-bold">
+                                <div className="flex justify-center items-center text-pink-500 text-xs font-black mt-1">
                                     <FaHeart className="mr-1" size={10} /> {drawing.likesCount}
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <hr className="border-gray-200 mt-4" />
+                    <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mt-12" />
                 </section>
             )}
 
+            <div className="flex items-center space-x-3 mb-8">
+                <h2 className="text-2xl font-black uppercase italic tracking-tight text-white px-2">Recent Submissions</h2>
+            </div>
+
             {drawings.length === 0 ? (
-                <div className="text-center py-20 bg-white/50 rounded-3xl border-2 border-dashed border-gray-300">
-                    <p className="text-gray-400 text-lg">No drawings yet. Be the first to submit!</p>
+                <div className="text-center py-20 glass rounded-3xl border-2 border-dashed border-white/10">
+                    <p className="text-gray-500 text-lg uppercase tracking-widest">No data found. Be the first to submit.</p>
                 </div>
             ) : (
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {drawings.map((drawing) => (
-                        <div 
-                            key={drawing.id} 
-                            className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col"
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                    {drawings.map((drawing, index) => (
+                        <motion.div 
+                            key={drawing.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }} 
+                            className="flex flex-col h-full"
                         >
-                            {/* Image Container */}
-                            <div className="aspect-square bg-gray-50 overflow-hidden relative">
-                                <img 
-                                    src={drawing.drawingUrl} 
-                                      alt="Sketch" 
-                                    loading="lazy"
-                                    className="object-cover w-full h-full"
-                                />
-                           
-                            </div>
-
-                            {/* Footer Information */}
-                            <div className="p-5 flex justify-between items-center bg-white mt-auto">
-                                <div className="flex items-center space-x-2">
-                                    <div className="bg-indigo-50 p-2 rounded-full">
-                                        <FaUserAlt size={14} className="text-indigo-500" />
-                                    </div>
-                                    <span className="text-sm font-bold text-gray-800">
-                                        {drawing.user.username || "Artist"}
-                                    </span>
+                            <div className="glass rounded-[2rem] overflow-hidden border border-white/5 hover:border-indigo-500/30 transition-all duration-300 flex flex-col h-full">
+                                {/* Image Container  */}
+                                <div className="aspect-square bg-slate-900/50 overflow-hidden relative">
+                                    <img 
+                                        src={drawing.drawingUrl} 
+                                        alt="Sketch" 
+                                        loading="lazy"
+                                        className="object-cover w-full h-full pixelated"
+                                    />
                                 </div>
 
-                                <button 
-                                    onClick={() => handleLike(drawing.id)}
-                                    disabled={!token}
-                                    className={`flex items-center space-x-1.5 px-3 py-1 rounded-full transition-all duration-200 
-                                        ${!token ? 'opacity-50 cursor-not-allowed bg-gray-100 text-gray-400' : 'bg-pink-50 text-pink-500 hover:bg-pink-100 active:scale-95'}`}
-                                    title={!token ? "Log in to like drawings" : ""}
-                                >
-                                    {drawing.likedByUser ? <FaHeart size={16} /> : <FaRegHeart size={16} />}
-                                    <span className="font-bold text-sm">{drawing.likesCount || 0}</span>
-                                </button>
+                                {/* Footer Information */}
+                                <div className="p-6 flex justify-between items-center bg-white/5 border-t border-white/5 mt-auto">
+                                    <div className="flex items-center space-x-3">
+                                        <div className="bg-indigo-500/20 p-2.5 rounded-xl">
+                                            <FaUserAlt size={12} className="text-indigo-400" />
+                                        </div>
+                                        <span className="text-sm font-black uppercase tracking-tight text-slate-200">
+                                            {drawing.user.username || "Artist"}
+                                        </span>
+                                    </div>
+
+                                    <button 
+                                        onClick={() => handleLike(drawing.id)}
+                                        disabled={!token}
+                                        className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-black
+                                            ${!token 
+                                                ? 'opacity-20 cursor-not-allowed bg-slate-800 text-slate-500' 
+                                                : drawing.likedByUser 
+                                                    ? 'bg-pink-600 text-white shadow-[0_0_15px_rgba(219,39,119,0.4)]' 
+                                                    : 'bg-white/10 text-slate-300 hover:bg-white/20'}`}
+                                    >
+                                        {drawing.likedByUser ? <FaHeart size={15} /> : <FaRegHeart size={15} />}
+                                        <span className="text-sm">{drawing.likesCount || 0}</span>
+                                    </button>
+                                </div>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
             )}

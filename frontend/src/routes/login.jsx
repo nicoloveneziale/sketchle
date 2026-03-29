@@ -42,17 +42,17 @@ export default function Login() {
     }
 
   return (
-    <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="bpy-12 px-4 sm:px-6 lg:px-8 mt-12">
+      <div className="max-w-md mx-auto glass not-odd:shadow-md rounded-lg overflow-hidden">
         <div className="px-6 py-8">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+          <h1 className="text-2xl font-semibold mb-6 text-center">
             Log In
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="username"
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block text-sm font-bold mb-2"
               >
                 Username
               </label>
@@ -61,7 +61,7 @@ export default function Login() {
                 name="username"
                 type="text"
                 placeholder="Enter your username"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -71,7 +71,7 @@ export default function Login() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="blocktext-sm font-bold mb-2"
               >
                 Password
               </label>
@@ -80,7 +80,7 @@ export default function Login() {
                 name="password"
                 type="password"
                 placeholder="Enter your password"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -98,7 +98,7 @@ export default function Login() {
             </button>
           </form>
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm">
               Don't have an account?
               <Link
                 to="/register"
