@@ -10,21 +10,31 @@ export default function Home() {
     const [error, setError] = useState(null);
     const [topDrawings, setTopDrawings] = useState([]);
     const [theme, setTheme] = useState("");
+    const [submission, setSubmission] = useState(null)
     const { token } = useAuth();
 
     useEffect(() => {
         const fetchDrawings = async () => {
             try {
                 const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const [todayRes, topRes, themeRes] = await Promise.all([
+                const [todayRes, topRes, themeRes, submissionRes] = await Promise.all([
                     api.get("/drawings/today", config), 
                     api.get("/drawings/top", config), 
                     api.get("/theme/daily"),
-                    api.get("/user/{")
+                    api.get("/drawings/submission", config).catch(() => ({ data: null }))
                 ]);
 
                 if (themeRes.data) {
                     setTheme(themeRes.data.word);
+                }
+
+                console.log(submissionRes)
+
+                if (submissionRes && submissionRes.data) {
+                    console.log(submissionRes)
+                    setSubmission(submissionRes.data);
+                } else {
+                    setSubmission(null)
                 }
 
                 if (todayRes.data && Array.isArray(todayRes.data.content)) {
@@ -89,6 +99,28 @@ export default function Home() {
             </header>
 
             {error && <p className="text-red-500 text-center glass border-red-500/20 p-4 rounded-lg">{error}</p>}
+
+            {/* Users Submission */}
+            { token ?
+            <section className="mb-16 ">
+                <div className="flex items-center space-x-3 mb-8 glass rounded-2xl p-4 border border-white/10">
+                    <h2 className="text-2xl font-black uppercase italic tracking-tight text-white">Your Submission</h2>
+                </div>
+                <div className="flex justify-center">
+                <div className="aspect-square w-150 rounded-2xl overflow-hidden border-2 border-white/10 glass transition-colors group-hover:border-indigo-500 flex justify-center items-center">
+                    { submission ?
+                     <img 
+                        src={submission.drawingUrl} 
+                        alt="Your Submission" 
+                        className="object-cover w-full h-full pixelated"
+                     />             
+                     :
+                     <h1>Add Submission +</h1>
+                    }    
+                </div>
+                </div>
+            </section>
+            : <></>}
 
             {/* Leaderboard Section */}
             {topDrawings.length > 0 && (

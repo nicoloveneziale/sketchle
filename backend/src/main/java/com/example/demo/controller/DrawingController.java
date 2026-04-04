@@ -86,12 +86,15 @@ public class DrawingController {
     @GetMapping("/submission")
     public ResponseEntity<?> getSubmission(Authentication authentication) {
         try {
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.ok().build(); 
+            }
             String username = authentication.getName();
             User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
             Drawing drawing = drawingRepository.findByUserAndThemeDate(user, LocalDate.now());
 
             if (drawing == null) {
-                return ResponseEntity.badRequest().body("No drawing submitted today");
+                return ResponseEntity.ok().build();
             }
 
             return ResponseEntity.ok(drawing);
