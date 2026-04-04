@@ -19,7 +19,8 @@ export default function Home() {
                 const [todayRes, topRes, themeRes] = await Promise.all([
                     api.get("/drawings/today", config), 
                     api.get("/drawings/top", config), 
-                    api.get("/theme/daily")
+                    api.get("/theme/daily"),
+                    api.get("/user/{")
                 ]);
 
                 if (themeRes.data) {

@@ -18,4 +18,6 @@ public interface DrawingRepository extends JpaRepository<Drawing, Long> {
     Page<Drawing> findByThemeDate(LocalDate date, Pageable pageable);
 
     List<Drawing> findByUserOrderBySubmittedAtDesc(User user);
+
+    Drawing findByUserAndThemeDate(User user, LocalDate date);
 }

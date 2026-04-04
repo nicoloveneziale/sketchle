@@ -74,12 +74,29 @@ public class DrawingController {
         try {
             User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User " + username + " cannot be found"));
 
-            List<Drawing> usaeDrawings = drawingRepository.findByUserOrderBySubmittedAtDesc(user);
-            return ResponseEntity.ok(usaeDrawings);
+            List<Drawing> userDrawings = drawingRepository.findByUserOrderBySubmittedAtDesc(user);
+            return ResponseEntity.ok(userDrawings);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(e.getMessage());
         } catch (Exception e) {
         return ResponseEntity.internalServerError().body("Error fetching user posts: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/submission")
+    public ResponseEntity<?> getSubmission(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+            Drawing drawing = drawingRepository.findByUserAndThemeDate(user, LocalDate.now());
+
+            if (drawing == null) {
+                return ResponseEntity.badRequest().body("No drawing submitted today");
+            }
+
+            return ResponseEntity.ok(drawing);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Could not find submission");
         }
     }
 
@@ -99,7 +116,6 @@ public class DrawingController {
     }
     }
     
-
     @PostMapping(value = "/submit", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> submitDrawing(
             @RequestParam("file") org.springframework.web.multipart.MultipartFile file, 
