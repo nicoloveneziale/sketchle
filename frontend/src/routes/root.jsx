@@ -6,7 +6,7 @@ import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 
 export default function Root() {
-    const { token, logout } = useAuth(); 
+    const { token, logout, username } = useAuth(); 
     const navigate = useNavigate();
     const [init, setInit] = useState(false);
 
@@ -106,7 +106,7 @@ export default function Root() {
                         <>
                             <div className="flex items-center text-slate-300 font-medium text-sm">
                                 <FaUserCircle className="mr-2 text-indigo-500 text-xl" /> 
-                                <span>Artist</span>
+                                <Link to={`/profile/${username}`}>{username}</Link>
                             </div>
                             <button 
                                 onClick={handleLogout}

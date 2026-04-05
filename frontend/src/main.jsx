@@ -12,6 +12,7 @@ import Root from "./routes/root";
 import Register from './routes/register';
 import Login from './routes/login';
 import Home from './routes/home';
+import Profile from './routes/profile';
 
 // Router object, dictates paths for each route
 const router = createBrowserRouter([
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
         path: "login",
         element: <Login/>
       },
+      {
+        path: "profile/:username",
+        element: <Profile/>
+      }
     ]
   }
 ])

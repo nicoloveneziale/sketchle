@@ -25,8 +25,8 @@ export default function Login() {
                 username,
                 password
             });
-            if (response.data.token) {
-                login(response.data.token);
+            if (response.data.token, username) {
+                login(response.data.token, username);
                 navigate("/")
             }
         } catch (err) {

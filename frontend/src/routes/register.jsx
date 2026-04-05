@@ -26,7 +26,11 @@ export default function Register() {
                 password
             });
             if (response.data.token) {
-                login(response.data.token);
+                login(response.data.token, username);
+                await api.post("/profiles/create", 
+                    { bio: `Hello! I'm ${username}.` }, 
+                    { headers: { Authorization: `Bearer ${response.data.token}` } }
+                );
                 navigate("/")
             }
         } catch (err) {
