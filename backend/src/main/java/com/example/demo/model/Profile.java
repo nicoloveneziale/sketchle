@@ -1,30 +1,44 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "profiles")
-@Getter @Setter
+@Getter 
+@Setter
+@NoArgsConstructor 
 public class Profile {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long id; 
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    @Column(length = 500)
+    private String bio;
 
-    @JsonIgnore
-    @Column(unique = true, nullable = false)
-    private String password;
+    @Column(name = "created_at", updatable = false)
+    private LocalDate createdAt;
 
-    public Profile() {}
+    @ElementCollection
+    @CollectionTable(name = "profile_badges", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "badge_name")
+    private List<String> badges = new ArrayList<>();
 
-    public Profile(String username, String password) {
-        this.username = username;
-        this.password = password;
+    @OneToOne
+    @MapsId 
+    @JoinColumn(name = "user_id")
+    @JsonIgnore 
+    private User user;
+
+    public Profile(User user) {
+        this.user = user;
+        this.createdAt = LocalDate.now();
     }
 }
