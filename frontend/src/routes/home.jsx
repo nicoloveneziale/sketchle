@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { FaHeart, FaUserAlt, FaRegHeart } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export default function Home() {
     const [drawings, setDrawings] = useState([]);
@@ -151,7 +152,9 @@ export default function Home() {
                                     index === 2 ? "text-amber-600" :
                                     "text-white"
                                 } `}>
-                                  {drawing.user.username}
+                                    <Link to={`/profile/${drawing.user.username}`}>
+                                        {drawing.user.username}
+                                    </Link>
                                 </p>
                                 <div className="flex justify-center items-center text-pink-500 text-xs font-black mt-1">
                                     <FaHeart className="mr-1" size={10} /> {drawing.likesCount}
@@ -198,9 +201,11 @@ export default function Home() {
                                         <div className="bg-indigo-500/20 p-2.5 rounded-xl">
                                             <FaUserAlt size={12} className="text-indigo-400" />
                                         </div>
-                                        <span className="text-sm font-black uppercase tracking-tight text-slate-200">
-                                            {drawing.user.username || "Artist"}
-                                        </span>
+                                        <Link to={`/profile/${drawing.user.username}`}>
+                                            <span className="text-sm font-black uppercase tracking-tight text-slate-200">
+                                                {drawing.user.username || "Artist"}
+                                            </span>
+                                        </Link>
                                     </div>
 
                                     <button 

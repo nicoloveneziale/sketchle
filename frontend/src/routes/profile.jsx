@@ -170,14 +170,14 @@ export default function Profile() {
       </div>
 
       <h2 className="text-xl font-semibold mb-4 ml-2">Previous Drawings</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 m-5">
         {drawings.length > 0 ? (
           drawings.map((drawing) => {
             const matchingBadge = profile?.badges?.find(b => b.includes(drawing.theme.date));
             const badgeType = matchingBadge?.split(' ')[0];
 
             return (
-              <div key={drawing.id} className="relative glass rounded-lg overflow-hidden border border-gray-700 hover:scale-105 transition-transform duration-200">
+              <div key={drawing.id} className="relative glass rounded-lg overflow-hidden border border-gray-700">
                   {badgeType && (
                       <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter shadow-lg z-10 ${
                           badgeType === 'Gold' ? 'bg-yellow-500 text-black' : 
@@ -189,7 +189,7 @@ export default function Profile() {
                       </div>
                   )}
 
-                  <img src={drawing.drawingUrl} className="w-full h-48 object-cover" />
+                  <img src={drawing.drawingUrl} className="w-full aspect-square  object-cover" />
                   <div className="p-4">
                       <h3 className="font-bold text-lg truncate">{drawing.theme.word}</h3>
                       <p className="text-xs text-gray-500">{new Date(drawing.submittedAt).toLocaleDateString()}</p>
