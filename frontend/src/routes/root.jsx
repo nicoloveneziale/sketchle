@@ -10,8 +10,12 @@ export default function Root() {
     const { token, logout, username } = useAuth(); 
     const navigate = useNavigate();
     const [init, setInit] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener("resize", handleResize);
+
         initParticlesEngine(async (engine) => {
             await loadSlim(engine);
         }).then(() => {
@@ -25,7 +29,7 @@ export default function Root() {
     };
 
     return (
-        <div className="relative min-h-screen text-slate-200 flex flex-col overflow-hidden brutal-text">
+        <div className="relative h-screen text-slate-200 flex flex-col overflow-hidden brutal-text">
             
             <div className="absolute inset-0 galaxy-stars z-0 pointer-events-none" />
             <div className="absolute inset-0 scanlines z-5 opacity-30" />
@@ -36,7 +40,7 @@ export default function Root() {
                         fpsLimit: 120,
                         fullScreen: { enable: false }, 
                         particles: {
-                            number: { value: 300 }, 
+                            number: { value: isMobile ? 80 : 300 }, 
                             color: "#ffffff",
                             shape: { type: "circle" },
                             opacity: {
@@ -88,7 +92,7 @@ export default function Root() {
                 />
             )}
 
-            <nav className="relative z-10 p-4 flex justify-between items-center glass mx-4 mt-4 rounded-2xl border-b border-white/5">
+            <nav className="relative z-20 flex-shrink-0 p-4 flex justify-between items-center glass mx-4 mt-4 rounded-2xl border-b border-white/5">
                 <Link to="/" className="brutal-text text-2xl tracking-tighter text-gradient">
                     <img 
                         src={logoMain} 
@@ -124,7 +128,7 @@ export default function Root() {
                 </div>
             </nav>
 
-            <main className="relative z-10 flex-grow p-6">
+            <main className="relative z-10 flex-grow overflow-y-auto custom-scrollbar p-6">
                 <div className="max-w-7xl mx-auto">
                     <Outlet />
                 </div>
