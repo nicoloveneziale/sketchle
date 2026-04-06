@@ -16,12 +16,24 @@ export default function Profile() {
 
   const isOwnProfile = loggedInUser === urlUsername;
 
+   const getBadgeCounts = () => {
+    if (!profile?.badges) return {};
+    return profile.badges.reduce((acc, badge) => {
+        const type = badge.split(' ')[0]; 
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+    }, {});
+  };
+
+  const badgeCounts = getBadgeCounts();
+
   useEffect(() => {
     const fetchProfileData = async () => {
         setIsLoading(true);
         try {
             const profileRes = await api.get(`/profiles/${urlUsername}`);
             setProfile(profileRes.data);
+            console.log(profileRes.dat)
 
             try {
                 const drawingsRes = await api.get(`/drawings/user/${urlUsername}`);
@@ -39,10 +51,10 @@ export default function Profile() {
         }
     };
 
-    if (urlUsername) {
-        fetchProfileData();
+  if (urlUsername) {
+      fetchProfileData();
     }
-    }, [urlUsername]);
+  }, [urlUsername]);
 
   if (isLoading) {
     return (
@@ -76,25 +88,52 @@ export default function Profile() {
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-3 mt-4">
+          {Object.entries(badgeCounts).map(([type, count]) => (
+              <div key={type} className="flex items-center bg-gray-800/50 px-3 py-1 rounded-full border border-gray-600">
+                  <span className={`w-3 h-3 rounded-full mr-2 ${
+                      type === 'Gold' ? 'bg-yellow-400 shadow-[0_0_8px_#facc15]' : 
+                      type === 'Silver' ? 'bg-gray-300 shadow-[0_0_8px_#d1d5db]' : 
+                      type === 'Bronze' ? 'bg-orange-500 shadow-[0_0_8px_#f97316]' :
+                      type === 'top10' ? 'bg-purple-500 shadow-[0_0_8px_#f97316]' :
+                      'bg-pink-500 shadow-[0_0_8px_#f97316]'
+                  }`}></span>
+                  <span className="text-xs font-bold text-gray-200">
+                      {type} <span className="text-purple-400 ml-1">x{count}</span>
+                  </span>
+              </div>
+          ))}
+      </div>
+
       {/* User's Previous Posts */}
       <h2 className="text-xl font-semibold mb-4 ml-2">Previous Drawings</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {drawings.length > 0 ? (
-          drawings.map((drawing) => (
-            <div key={drawing.id} className="glass rounded-lg overflow-hidden border border-gray-700 hover:scale-105 transition-transform duration-200">
-              <img 
-                src={drawing.drawingUrl} 
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h3 className="font-bold text-lg truncate">{drawing.theme.word}</h3>
-                <p className="text-xs text-gray-500">{new Date(drawing.submittedAt).toLocaleDateString()}</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 italic ml-2">This user hasn't posted any masterpieces yet.</p>
-        )}
+        {drawings.map((drawing) => {
+            const matchingBadge = profile.badges.find(b => b.includes(drawing.theme.date));
+            const badgeType = matchingBadge?.split(' ')[0];
+
+ 
+            return (
+                <div key={drawing.id} className="relative glass rounded-lg overflow-hidden border border-gray-700 hover:scale-105 transition-transform duration-200">
+                    {badgeType && (
+                        <div className={`absolute top-2 right-2 px-2 py-1 rounded text-[10px] font-black uppercase tracking-tighter shadow-lg z-10 ${
+                            badgeType === 'Gold' ? 'bg-yellow-500 text-black' : 
+                            badgeType === 'Silver' ? 'bg-gray-300 text-black' : 
+                            badgeType === 'Bronze' ? 'bg-orange-600 text-white' :
+                            'bg-purple-600 text-white'
+                        }`}>
+                          🏆 {badgeType} Winner
+                        </div>
+                    )}
+
+                    <img src={drawing.drawingUrl} className="w-full h-48 object-cover" />
+                    <div className="p-4">
+                        <h3 className="font-bold text-lg truncate">{drawing.theme.word}</h3>
+                        <p className="text-xs text-gray-500">{new Date(drawing.submittedAt).toLocaleDateString()}</p>
+                    </div>
+                </div>
+                );
+            })}
       </div>
     </div>
   );
