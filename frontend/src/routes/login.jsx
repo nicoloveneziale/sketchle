@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { PuffLoader } from "react-spinners";
 import api from "../api/axios";
+import logoSecondary from "../assets/logo-secondary.svg";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -42,26 +43,35 @@ export default function Login() {
     }
 
   return (
-    <div className="bpy-12 px-4 sm:px-6 lg:px-8 mt-12">
-      <div className="max-w-md mx-auto glass not-odd:shadow-md rounded-lg overflow-hidden">
-        <div className="px-6 py-8">
-          <h1 className="text-2xl font-semibold mb-6 text-center">
-            Log In
+    <div className="py-5 px-4 sm:px-6 lg:px-8  flex flex-col items-center">
+      <div className="mb-8 animate-pulse-slow">
+        <img 
+          src={logoSecondary} 
+          alt="Sketchle Logo" 
+          className="h-35 w-auto mr-4 invert drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+        />
+      </div>
+
+      <div className="max-w-md w-full glass rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+        <div className="px-8 py-10">
+          <h1 className="text-3xl font-bold mb-8 text-center brutal-text text-gradient">
+            Welcome Back
           </h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {errors.length > 0 && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
+              {errors.map((err, i) => <p key={i}>{err.msg}</p>)}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="username"
-                className="block text-sm font-bold mb-2"
-              >
+              <label htmlFor="username" className="block text-xs uppercase tracking-widest font-bold mb-2 text-slate-400">
                 Username
               </label>
               <input
                 id="username"
-                name="username"
                 type="text"
-                placeholder="Enter your username"
-                className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-indigo-500 transition-all"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -69,18 +79,13 @@ export default function Login() {
               />
             </div>
             <div>
-              <label
-                htmlFor="password"
-                className="blocktext-sm font-bold mb-2"
-              >
+              <label htmlFor="password" className="block text-xs uppercase tracking-widest font-bold mb-2 text-slate-400">
                 Password
               </label>
               <input
                 id="password"
-                name="password"
                 type="password"
-                placeholder="Enter your password"
-                className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-indigo-500 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -89,22 +94,20 @@ export default function Login() {
             </div>
             <button
               type="submit"
-              className={`bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-md focus:outline-none focus:shadow-outline w-full transition duration-300 ease-in-out ${
+              className={`bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl w-full transition-all shadow-lg shadow-indigo-500/25 flex justify-center items-center ${
                 isLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isLoading}
             >
-              {isLoading ? <PuffLoader color="#fff" size={20} /> : "Log In"}
+              {isLoading ? <PuffLoader color="#fff" size={20} /> : "SIGN IN"}
             </button>
           </form>
-          <div className="mt-6 text-center">
-            <p className="text-sm">
-              Don't have an account?
-              <Link
-                to="/register"
-                className="text-indigo-500 hover:text-indigo-700 font-medium ml-1 transition duration-200"
-              >
-                Register
+          
+          <div className="mt-8 text-center border-t border-white/5 pt-6">
+            <p className="text-slate-400 text-sm">
+              New to Sketchle?
+              <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-bold ml-2">
+                Create Account
               </Link>
             </p>
           </div>

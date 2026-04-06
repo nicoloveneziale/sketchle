@@ -31,14 +31,17 @@ public class DrawingController {
     private final DrawingRepository drawingRepository;
     private final UserRepository userRepository;
     private final ThemeRepository themeRepository;
+    private final LikeRepository likeRepository;
     private final SupabaseStorageService storageService; 
     public DrawingController(DrawingRepository drawingRepository, 
                              UserRepository userRepository, 
+                             LikeRepository likeRepository,
                              ThemeRepository themeRepository,
                              SupabaseStorageService storageService) { 
         this.drawingRepository = drawingRepository;
         this.userRepository = userRepository;
         this.themeRepository = themeRepository;
+        this.likeRepository = likeRepository;
         this.storageService = storageService;
     }
 
@@ -154,9 +157,6 @@ public class DrawingController {
             return ResponseEntity.internalServerError().body("Error processing upload: " + e.getMessage());
         }
     }
-
-    @Autowired
-    private LikeRepository likeRepository;
 
     @PostMapping("/{drawingId}/like")
     public ResponseEntity<?> toggleLike(@PathVariable Long drawingId, Authentication authentication) {

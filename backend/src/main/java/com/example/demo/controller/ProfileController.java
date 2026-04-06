@@ -33,7 +33,7 @@ public class ProfileController {
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
             if (profileRepository.existsById(user.getId())) {
-                return ResponseEntity.badRequest().body("Profile already exists");
+                return ResponseEntity.badRequest().body("Profile already taken");
             }
 
             Profile profile = new Profile(user);
@@ -63,11 +63,12 @@ public class ProfileController {
 
             String newUsername = body.get("username");
             if (newUsername != null && !newUsername.isBlank() && !newUsername.equals(currentUsername)) {
-                if (userRepository.existsByUsername(newUsername));
-                return ResponseEntity.badRequest().body("Username already exists");
+                if (userRepository.existsByUsername(newUsername)){
+                    return ResponseEntity.badRequest().body("Username already taken");
+                }
+                 user.setUsername(newUsername);
+                userRepository.save(user);
             }
-            user.setUsername(newUsername);
-            userRepository.save(user);
 
             String newBio = body.get("bio");
             Profile profile = profileRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("Profile is not found for this user"));

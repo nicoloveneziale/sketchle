@@ -31,7 +31,6 @@ export default function Home() {
                 console.log(submissionRes)
 
                 if (submissionRes && submissionRes.data) {
-                    console.log(submissionRes)
                     setSubmission(submissionRes.data);
                 } else {
                     setSubmission(null)

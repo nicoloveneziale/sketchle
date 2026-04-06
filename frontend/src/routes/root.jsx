@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { FaUserPlus, FaSignInAlt, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import Particles, { initParticlesEngine } from "@tsparticles/react"; 
 import { loadSlim } from "@tsparticles/slim";
+import logoMain from "../assets/logo-main.svg";
 
 export default function Root() {
     const { token, logout, username } = useAuth(); 
@@ -89,7 +90,11 @@ export default function Root() {
 
             <nav className="relative z-10 p-4 flex justify-between items-center glass mx-4 mt-4 rounded-2xl border-b border-white/5">
                 <Link to="/" className="brutal-text text-2xl tracking-tighter text-gradient">
-                    SKETCHLE
+                    <img 
+                        src={logoMain} 
+                        alt="Sketchle Logo" 
+                        className="h-20 w-auto invert drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
+                    />
                 </Link>
 
                 <div className="flex gap-6 items-center">
