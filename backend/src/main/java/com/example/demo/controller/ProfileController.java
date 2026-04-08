@@ -5,6 +5,7 @@ import com.example.demo.model.User;
 import com.example.demo.repository.ProfileRepository;
 import com.example.demo.repository.UserRepository;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/profiles")
+@Tag(name = "Profiles", description = "Endpoints for retrieving, creating and editing profiles")
 public class ProfileController {
 
     private final ProfileRepository profileRepository;
