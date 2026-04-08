@@ -84,7 +84,7 @@ export default function Root() {
                                     distance: 130,
                                     links: { opacity: 0.5 }
                                 },
-                                push: { quantity: 4 }
+                                push: { quantity: isMobile ? 2 : 4 }
                             }
                         },
                         detectRetina: true,

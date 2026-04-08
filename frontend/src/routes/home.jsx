@@ -90,7 +90,7 @@ export default function Home() {
             {/* Header  */}
             <header className="mb-10 text-center glass border-b border-white/5 rounded-2xl shadow-xl w-full p-6">
                 <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
-                    Today's Theme
+                    Today's Theme 
                 </h1>
                 <h1 className="text-7xl font-extrabold text-white mt-2 uppercase tracking-tighter">
                     {theme}
