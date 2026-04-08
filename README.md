@@ -1,7 +1,9 @@
 🎨 Sketchle
+
 A high-performance drawing hub with a React frontend, Spring Boot API, and C++ Desktop integration.
 
 🚀 Quick Start (Development)
+
 We use a Hybrid Environment: The Backend and Database run in Docker for stability, while the Frontend runs Locally for instant UI hot-reloading.
 
 1. Prerequisites
@@ -16,9 +18,13 @@ Create a .env file in the root directory:
 
 Code snippet
 SPRING_DATASOURCE_URL=jdbc:postgresql://your-supabase-db-url:5432/postgres
+
 SPRING_DATASOURCE_USERNAME=postgres
+
 SPRING_DATASOURCE_PASSWORD=your_password
+
 SUPABASE_URL=https://your_project.supabase.co
+
 SUPABASE_KEY=your_anon_key
 3. Spin up the Backend (Docker)
 From the root folder, run:
