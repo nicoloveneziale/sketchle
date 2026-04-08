@@ -67,13 +67,17 @@ Body: multipart/form-data (Key: file)
 C++ Example (CPR Library):
 
 C++
+
 cpr::Response r = cpr::Post(
     cpr::Url{"http://localhost:8080/api/drawings/submit"},
     cpr::Header{{"Authorization", "Bearer " + jwt_token}},
     cpr::Multipart{{"file", cpr::Buffer{png_data.begin(), png_data.end(), "drawing.png"}}}
 );
+
 📦 Production Build
+
 If you want to test the full containerized production stack (using Nginx):
 
 Bash
+
 docker compose up --build
