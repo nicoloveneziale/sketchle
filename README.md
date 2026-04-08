@@ -1,89 +1,73 @@
-# sketchle
-A drawing app!
+🎨 Sketchle
+A high-performance drawing hub with a React frontend, Spring Boot API, and C++ Desktop integration.
 
-PrerequisitesJava 17 or 21 (JDK)Maven 3.8+Node.js (for the Web Gallery)
-Supabase Account (Storage bucket named drawings must exist).
+🚀 Quick Start (Development)
+We use a Hybrid Environment: The Backend and Database run in Docker for stability, while the Frontend runs Locally for instant UI hot-reloading.
 
-How to Run the Project
+1. Prerequisites
+Docker & Docker Desktop installed.
 
-Backend (Spring Boot)
+Node.js (v20+) installed locally.
 
-Navigate to the /backend folder.
+A Supabase project with a storage bucket named drawings.
 
-Open src/main/resources/application.properties and fill in your Supabase credentials:
+2. Configure Environment
+Create a .env file in the root directory:
 
-Properties
+Code snippet
+SPRING_DATASOURCE_URL=jdbc:postgresql://your-supabase-db-url:5432/postgres
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=your_password
+SUPABASE_URL=https://your_project.supabase.co
+SUPABASE_KEY=your_anon_key
+3. Spin up the Backend (Docker)
+From the root folder, run:
 
-supabase.url=your_project_url
+Bash
+docker compose up backend -d
+The API is now live at http://localhost:8080
 
-supabase.key=your_anon_key
+4. Spin up the Frontend (Local)
+For the best UI design experience with instant refreshes:
 
-spring.datasource.url=your_postgres_url
-
-Run the application:
-
-./mvnw spring-boot:run
-
-The server will start at http://localhost:8080
-
-Web Gallery (React)
-
-Navigate to the /frontend folder.
-
-Install dependencies:
-
-npm install 
-
-Start the development server:
-
+Bash
+cd frontend
+npm install
 npm run dev
+The UI is now live at http://localhost:5173
 
-The site will be available at http://localhost:5173
+🛠 API for C++ Desktop App
+Integration docs for the native client (using CPR or similar).
 
------ROUTES FOR C++ APP-----
-
-Login:
+Authentication
 POST /api/auth/login
-Request Body (JSON):
-JSON
-{
-  "username": "your_username",
-  "password": "your_password"
-}
-Success Response: 200 OK
-JSON
-{ "token": "eyJhbG..." }
 
-Todays Theme:
-Endpoint: GET /api/theme/daily
-Authentication: Not required (Public)
-Success Response: 200 OK
-JSON
-{
-  "date": "2026-03-26",
-  "word": "Cat"
-}
+Body: { "username": "...", "password": "..." }
 
-Today's Submission:
+Returns: { "token": "JWT_HERE" }
 
-Endpoint: POST /api/drawings/submit
+Daily Theme
+GET /api/theme/daily
 
-Content-Type: multipart/form-data
+Returns: { "date": "2026-04-08", "word": "Space" }
 
-Authentication: Required (Authorization: Bearer <JWT_TOKEN>)
+Submit Drawing
+POST /api/drawings/submit
 
-Key: file
+Header: Authorization: Bearer <JWT_TOKEN>
 
-Value: The raw binary data of the image (PNG format recommended)
+Body: multipart/form-data (Key: file)
 
-CPR??? 
+C++ Example (CPR Library):
 
-cpr::Response r = cpr::Post( cpr::Url{"http://localhost:8080/api/drawings/submit"}
+C++
+cpr::Response r = cpr::Post(
+    cpr::Url{"http://localhost:8080/api/drawings/submit"},
+    cpr::Header{{"Authorization", "Bearer " + jwt_token}},
+    cpr::Multipart{{"file", cpr::Buffer{png_data.begin(), png_data.end(), "drawing.png"}}}
+);
+📦 Production Build
+If you want to test the full containerized production stack (using Nginx):
 
-cpr::Header{{"Authorization", "Bearer " + jwt_token}}, 
-
-cpr::Multipart{ {"file", cpr::Buffer{png_data.begin(), png_data.end(), "drawing.png"}} } );
-
-Response (200 OK):
-Plaintext
-Drawing uploaded successfully! URL: https://[supabase-url]/.../image.png
+Bash
+docker compose up --build
