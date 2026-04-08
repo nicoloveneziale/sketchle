@@ -24,6 +24,12 @@ jobs:
         run: mvn -f backend/pom.xml clean package -DskipTests
 
       - name: Run Backend Tests
+        env:
+          SPRING_DATASOURCE_URL: ${{ secrets.DB_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: mvn -f backend/pom.xml test
 
   frontend-checks:
