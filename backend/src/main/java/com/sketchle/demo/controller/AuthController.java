@@ -20,7 +20,6 @@ import com.sketchle.demo.security.JwtService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
 @Tag(name = "Authorization", description = "Endpoints for submitting and retrieving users and tokens")
 public class AuthController {
     private final UserRepository userRepository;
