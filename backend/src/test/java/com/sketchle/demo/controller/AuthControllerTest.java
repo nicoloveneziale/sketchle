@@ -117,6 +117,6 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isUnauthorized()) 
-                .andExpect(jsonPath("$.message").value("Invalid username or password"));
+                .andExpect(jsonPath("$.message").value("Username and password do not match"));
     }
 }
