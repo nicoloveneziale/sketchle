@@ -86,13 +86,13 @@ export default function Home() {
     );
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-10 brutal-text">
+        <div className="max-w-full mx-auto px-4 py-10 brutal-text">
             {/* Header  */}
             <header className="mb-10 text-center glass border-b border-white/5 rounded-2xl shadow-xl w-full p-6">
-                <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">
+                <h1 className="text-3xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">
                     Today's Theme 
                 </h1>
-                <h1 className="text-7xl font-extrabold text-white mt-2 uppercase tracking-tighter">
+                <h1 className="text-7xl font-extrabold text-white mt-2 uppercase tracking-tighter sm:text-4xl">
                     {theme}
                 </h1>
                 <p className="text-gray-400 mt-2 italic">Fresh sketches from the community</p>

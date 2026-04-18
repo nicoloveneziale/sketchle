@@ -97,7 +97,7 @@ export default function Root() {
                     <img 
                         src={logoMain} 
                         alt="Sketchle Logo" 
-                        className="h-20 w-auto invert drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
+                        className="h-13 w-auto invert drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
                     />
                 </Link>
 
