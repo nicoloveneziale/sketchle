@@ -26,7 +26,7 @@ export default function Login() {
                 username,
                 password
             });
-            if (response.data.token, username) {
+            if (response.data.token && username) {
                 login(response.data.token, username);
                 navigate("/")
             }
@@ -35,7 +35,7 @@ export default function Login() {
                 setErrors([err.response.data]);
 
             } else {
-                setErrors([{ msg: "Server is unreachable"}]);
+                setErrors(["Server is unreachable"]);
             } 
         } finally {
             setIsLoading(false);

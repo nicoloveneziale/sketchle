@@ -38,7 +38,7 @@ export default function Register() {
             if (err.response && err.response.data) {
                 setErrors([err.response.data]);
             } else {
-                setErrors([{ msg: "Server is unreachable"}]);
+                setErrors(["Server is unreachable"]);
             } 
         } finally {
             setIsLoading(false);
