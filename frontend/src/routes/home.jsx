@@ -88,13 +88,13 @@ export default function Home() {
         <div className="max-w-full mx-auto px-4 py-10 brutal-text">
             {/* Header  */}
             <header className="mb-10 text-center glass border-b border-white/5 rounded-2xl shadow-xl w-full p-6">
-                <h1 className="text-3xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">
+                <h1 className="text-xl md:text-3xl  font-extrabold text-transparent bg-clip-text bg-linear-to-r from-indigo-400 to-purple-400">
                     Today's Theme 
                 </h1>
-                <h1 className="text-7xl font-extrabold text-white mt-2 uppercase tracking-tighter sm:text-4xl">
+                <h1 className="text-3xl md:text-7xl font-extrabold text-white mt-2 uppercase tracking-tighter">
                     {theme}
                 </h1>
-                <p className="text-gray-400 mt-2 italic">Fresh sketches from the community</p>
+                <p className="text-gray-400 text-l md:text-3xl mt-2 italic">Fresh sketches from the community</p>
             </header>
 
             {error && <p className="text-red-500 text-center glass border-red-500/20 p-4 rounded-lg">{error}</p>}
@@ -114,7 +114,7 @@ export default function Home() {
                     <p className="text-gray-500 text-lg uppercase tracking-widest">No data found. Be the first to submit.</p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-10">
                     {drawings.map((drawing, index) => (
                         <motion.div 
                             key={drawing.id}

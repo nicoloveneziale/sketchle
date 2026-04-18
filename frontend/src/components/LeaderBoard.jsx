@@ -10,9 +10,9 @@ export default function LeaderBoard({topDrawings}) {
                         <h2 className="text-2xl font-black uppercase italic tracking-tight text-white">Today's Top 10</h2>
                     </div>
                     
-                    <div className="flex flex-wrap gap-8 lg:justify-start">
+                    <div className="flex flex-wrap justify-center gap-8 md:justify-start">
                         {topDrawings.map((drawing, index) => (
-                            <div key={drawing.id} className="w-40 group">
+                            <div key={drawing.id} className="w-50 group">
                                 <div className="relative">
                                     <div className="absolute -top-2 -left-2 z-10 bg-indigo-600 text-white shadow-xl rounded-full w-8 h-8 flex items-center justify-center font-black border-2 border-[#020617] text-sm">
                                         {index + 1}
