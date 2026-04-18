@@ -9,6 +9,7 @@ import com.sketchle.demo.model.User;
 import com.sketchle.demo.repository.DrawingRepository;
 import com.sketchle.demo.repository.ProfileRepository;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
@@ -24,28 +25,57 @@ public class BadgeService {
         this.profileRepository = profileRepository;
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
-    @Transactional
-    public void awardDailyBadges() {
+    @PostConstruct // Does this on startup for the class
+    public void init() {
+        awardMissedBadges();
+    }
+
+    @Transactional // DB either does all or nothing
+    public void awardMissedBadges() {
         LocalDate yesterday = LocalDate.now().minusDays(1);
-        String dateSuffix = yesterday.toString();
         List<Drawing> topDrawings = drawingRepository.findTop10ByThemeDate(yesterday);
 
-        for (int i = 0; i < topDrawings.size(); i++) {
+        if (topDrawings.isEmpty()) return; // Checks if empty
+
+        // Gets yesterdays winner, if they do not have a badge we assume no one else does, so then we call to award the badges for yesterday
+        Drawing first = topDrawings.get(0); 
+        User winner = first.getUser();
+        Profile profile = profileRepository.findById(winner.getId()).orElse(null);
+        if (profile != null && profile.getBadges().stream().anyMatch(b -> b.contains(yesterday.toString()))) {
+            return; 
+        }
+
+        awardBadgesForDate(yesterday);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *") // Runs every midnight
+    @Transactional
+    public void awardDailyBadges() {
+        awardBadgesForDate(LocalDate.now().minusDays(1));
+    }
+
+    private void awardBadgesForDate(LocalDate date) {
+        String dateSuffix = date.toString();
+        List<Drawing> topDrawings = drawingRepository.findTop10ByThemeDate(date);
+
+        for (int i = 0; i < topDrawings.size(); i++) { // Gets each place
             Drawing post = topDrawings.get(i);
-            User winner = post.getUser();
-            Profile profile = profileRepository.findById(winner.getId()).orElse(null);
+            User winner = post.getUser(); // Gets each user
+            Profile profile = profileRepository.findById(winner.getId()).orElse(null); // Gets each profile fo the user
 
             if (profile != null) {
-                String badgeName = "";
+                String badgeName; // Badge dependent on where they placed
                 if (i == 0) badgeName = "Gold " + dateSuffix;
                 else if (i == 1) badgeName = "Silver " + dateSuffix;
                 else if (i == 2) badgeName = "Bronze " + dateSuffix;
                 else badgeName = "Top 10 " + dateSuffix;
 
-                profile.getBadges().add(badgeName);
-                profileRepository.save(profile);
+                if (!profile.getBadges().contains(badgeName)) { // If users dont already have the badge, we add it and save to DB
+                    profile.getBadges().add(badgeName);
+                    profileRepository.save(profile);
+                }
             }
         }
+        System.out.println("Badges awarded for: " + dateSuffix);
     }
 }
