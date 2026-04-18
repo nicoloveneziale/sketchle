@@ -1,7 +1,15 @@
 package com.sketchle.demo.dto;
 
-public record ErrorResponse(
-    String message,
-    int status,
-    long timestamp
-) {}
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ErrorResponse  {
+    String msg;
+    String path;
+    int status;
+    long timestamp;
+}

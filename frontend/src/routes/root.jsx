@@ -96,7 +96,7 @@ export default function Root() {
                     <img 
                         src={logoMain} 
                         alt="Sketchle Logo" 
-                        className="h-13 w-auto invert drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
+                        className="h-7 md:h-13 w-auto invert drop-shadow-[0_0_10px_rgba(99,102,241,0.5)]" 
                     />
                 </Link>
 
@@ -127,7 +127,7 @@ export default function Root() {
                 </div>
             </nav>
 
-            <main className="relative z-10 flex-grow overflow-y-auto custom-scrollbar p-6">
+            <main className="relative z-10 flex-grow overflow-y-auto custom-scrollbar">
                 <div className="max-w-7xl mx-auto">
                     <Outlet />
                 </div>

@@ -1,12 +1,15 @@
 package com.sketchle.demo.dto;
 
-public class AuthErrorResponse {
-    private String message;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    public AuthErrorResponse(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthErrorResponse  {
+    String msg;
+    String path;
+    int status;
+    long timestamp;
 }

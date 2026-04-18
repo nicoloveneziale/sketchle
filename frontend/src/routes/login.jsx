@@ -32,7 +32,7 @@ export default function Login() {
             }
         } catch (err) {
             if (err.response && err.response.data) {
-                setErrors(Array.isArray(err.response.data) ? err.response.data : [{msg: "Login failed"}]);
+                setErrors([err.response.data]);
 
             } else {
                 setErrors([{ msg: "Server is unreachable"}]);
@@ -43,8 +43,8 @@ export default function Login() {
     }
 
   return (
-    <div className="py-5 px-4 sm:px-6 lg:px-8  flex flex-col items-center">
-      <div className="mb-8 animate-pulse-slow">
+    <div className="pt-5 px-4 sm:px-6 lg:px-8  flex flex-col items-center">
+      <div className="hidden md:block mb-8 animate-pulse-slow">
         <img 
           src={logoSecondary} 
           alt="Sketchle Logo" 
@@ -53,17 +53,11 @@ export default function Login() {
       </div>
 
       <div className="max-w-md w-full glass rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-        <div className="px-8 py-10">
-          <h1 className="text-3xl font-bold mb-8 text-center brutal-text text-gradient">
+        <div className="px-8 py-2 md:py-10 ">
+          <h1 className="text-2xl md:text-3xl font-bold mb-8 text-center brutal-text text-gradient">
             Welcome Back
           </h1>
-          {errors.length > 0 && (
-            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
-              {errors.map((err, i) => <p key={i}>{err.msg}</p>)}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 text-sm md:text-m">
             <div>
               <label htmlFor="username" className="block text-xs uppercase tracking-widest font-bold mb-2 text-slate-400">
                 Username
@@ -71,6 +65,7 @@ export default function Login() {
               <input
                 id="username"
                 type="text"
+                placeholder="Enter your username"
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-indigo-500 transition-all"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -85,12 +80,21 @@ export default function Login() {
               <input
                 id="password"
                 type="password"
+                placeholder="Enter your password"
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-indigo-500 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
               />
+                {errors.length > 0 && 
+                    errors.map((err, index) => (
+                      <p key={index} className="text-xs text-red-400 mt-2 font-bold ml-1">
+                      {err}
+                      </p>
+                    )
+                    )
+                }
             </div>
             <button
               type="submit"

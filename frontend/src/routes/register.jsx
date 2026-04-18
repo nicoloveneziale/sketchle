@@ -36,8 +36,7 @@ export default function Register() {
             }
         } catch (err) {
             if (err.response && err.response.data) {
-                setErrors(Array.isArray(err.response.data) ? err.response.data : [{msg: "Registration failed"}]);
-
+                setErrors([err.response.data]);
             } else {
                 setErrors([{ msg: "Server is unreachable"}]);
             } 
@@ -45,15 +44,10 @@ export default function Register() {
             setIsLoading(false);
         }
     }
-    
-    const getFieldError = (field) => {
-        const error = errors.find((err) => err.path === field);
-        return error?.msg;
-    };
 
     return (
-      <div className="py-5 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-        <div className="mb-8">
+      <div className="pt-5 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+        <div className="hidden md:block mb-8">
           <img 
             src={logoSecondary} 
             alt="Sketchle Logo" 
@@ -62,12 +56,12 @@ export default function Register() {
         </div>
 
         <div className="max-w-md w-full glass rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-          <div className="px-8 py-10">
-            <h1 className="text-3xl font-bold mb-8 text-center brutal-text text-gradient">
+          <div className="px-8 py-2 md:py-10">
+            <h1 className="text-2xl md:text-3xl font-bold mb-8 text-center brutal-text text-gradient">
               Join Sketchle
             </h1>
             
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 text-sm md:text-m">
               <div>
                 <label htmlFor="username" className="block text-xs uppercase tracking-widest font-bold mb-2 text-slate-400">
                   Username
@@ -82,11 +76,6 @@ export default function Register() {
                   required
                   disabled={isLoading}
                 />
-                {getFieldError("username") && (
-                  <p className="text-xs text-red-400 mt-2 font-bold ml-1">
-                    {getFieldError("username")}
-                  </p>
-                )}
               </div>
               
               <div>
@@ -103,11 +92,16 @@ export default function Register() {
                   required
                   disabled={isLoading}
                 />
-                {getFieldError("password") && (
-                  <p className="text-xs text-red-400 mt-2 font-bold ml-1">
-                    {getFieldError("password")}
-                  </p>
-                )}
+                <>
+                {errors.length > 0 && 
+                    errors.map((err, index) => (
+                      <p key={index} className="text-xs text-red-400 mt-2 font-bold ml-1">
+                      {err}
+                      </p>
+                    )
+                    )
+                }
+                </>
               </div>
 
               <button

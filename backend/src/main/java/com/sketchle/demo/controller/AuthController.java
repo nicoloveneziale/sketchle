@@ -33,9 +33,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegistrationRequest request) {
+    public ResponseEntity<?> register(@RequestBody RegistrationRequest request) {
+        String password = request.getPassword();
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username " + request.getUsername() + " is already taken");
+            return ResponseEntity.badRequest().body("Username already taken");
+        }
+        if (password == null || password.length() < 8 || password.length() > 20) {
+            return ResponseEntity.badRequest().body("Password needs to be between 8 and 20 characters long");
+        }
+        if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$")) {
+            return ResponseEntity.badRequest().body("Password needs to contain at least one uppercase character, one lowercase character and one number");
         }
 
         User user = new User();
@@ -48,11 +55,10 @@ public class AuthController {
     }
 
     @PostMapping("login") 
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                .body(new AuthErrorResponse("User not found"));
+            return ResponseEntity.badRequest().body("User not found");
         }
         User user = userOptional.get();
 
@@ -60,7 +66,6 @@ public class AuthController {
             String token = jwtService.generateToken(user.getUsername());
             return ResponseEntity.ok(new LoginResponse(token));
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body(new AuthErrorResponse("Invalid username or password"));
+        return ResponseEntity.badRequest().body("Username and password do not match");
     }
 }
