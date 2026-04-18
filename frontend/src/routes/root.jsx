@@ -29,8 +29,7 @@ export default function Root() {
     };
 
     return (
-        <div className="relative h-screen text-slate-200 flex flex-col overflow-hidden brutal-text">
-            
+        <div className="relative h-dvh text-slate-200 flex flex-col overflow-hidden brutal-text">
             <div className="absolute inset-0 galaxy-stars z-0 pointer-events-none" />
             <div className="absolute inset-0 scanlines z-5 opacity-30" />
             {init && (

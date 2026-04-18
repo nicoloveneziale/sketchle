@@ -32,6 +32,15 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400;
   }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    display: block; 
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 html, body {
@@ -93,4 +102,6 @@ html, body {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
