@@ -7,26 +7,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sketchle.demo.model.DailyTheme;
-import com.sketchle.demo.repository.ThemeRepository;
+import com.sketchle.demo.service.ThemeService;
 
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/theme")
 @Tag(name = "Themes", description = "Endpoints for retreiving themes")
 public class ThemeController {
 
-    private final ThemeRepository themeRepository;
+    private final ThemeService themeService;
 
-    public ThemeController(ThemeRepository themeRepository) {
-        this.themeRepository = themeRepository;
+    public ThemeController(ThemeService themeService) {
+        this.themeService = themeService;
     }
 
     @GetMapping("/daily")
-    public ResponseEntity<DailyTheme> getDailyTheme() {
-        return themeRepository.findById(LocalDate.now())
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<String> getDailyTheme() {
+        String theme = themeService.getCurrentTheme();
+        if (theme == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(theme);
     }
 }

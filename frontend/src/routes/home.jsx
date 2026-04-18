@@ -26,10 +26,8 @@ export default function Home() {
                 ]);
 
                 if (themeRes.data) {
-                    setTheme(themeRes.data.word);
+                    setTheme(themeRes.data);
                 }
-
-                console.log(submissionRes)
 
                 if (submissionRes && submissionRes.data) {
                     setSubmission(submissionRes.data);
