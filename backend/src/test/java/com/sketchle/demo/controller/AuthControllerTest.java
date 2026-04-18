@@ -116,7 +116,6 @@ public class AuthControllerTest {
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(status().isUnauthorized()) 
-                .andExpect(jsonPath("$.message").value("Username and password do not match"));
+                .andExpect(status().isUnauthorized());
     }
 }

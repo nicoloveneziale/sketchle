@@ -66,6 +66,6 @@ public class AuthController {
             String token = jwtService.generateToken(user.getUsername());
             return ResponseEntity.ok(new LoginResponse(token));
         }
-        return ResponseEntity.badRequest().body("Username and password do not match");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username and password do not match");
     }
 }
