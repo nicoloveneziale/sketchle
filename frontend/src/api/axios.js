@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://sketchle.onrender.com', 
+    baseURL: 'https://sketchle.onrender.com/api', 
     headers: {
         'Content-Type': 'application/json'
     }
