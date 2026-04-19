@@ -27,7 +27,11 @@ public class BadgeService {
 
     @PostConstruct // Does this on startup for the class
     public void init() {
-        awardMissedBadges();
+        try {
+            awardMissedBadges();
+        } catch (Exception e) {
+            System.err.println("Badge init failed, will retry on next request: " + e.getMessage());
+        }
     }
 
     @Transactional // DB either does all or nothing

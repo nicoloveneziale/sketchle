@@ -24,10 +24,14 @@ public class ThemeService {
 
     @PostConstruct
     public void init() {
-        themeRepository.findById(LocalDate.now()).ifPresentOrElse( // Checks if theres already a theme for today
-            theme -> this.currentTheme = theme.getWord(), // Gets the theme stored in DB
-            this::pickNewTheme // Else calls pickNewTheme
-        );
+        try {
+            themeRepository.findById(LocalDate.now()).ifPresentOrElse( // Checks if theres already a theme for today
+                theme -> this.currentTheme = theme.getWord(), // Gets the theme stored in DB
+                this::pickNewTheme // Else calls pickNewTheme
+            );
+        } catch (Exception e){
+            System.err.println("Theme init failed, will pick on first request: " + e.getMessage());
+        }
     }
 
     private void pickNewTheme() {
