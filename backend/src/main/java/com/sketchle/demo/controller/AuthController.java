@@ -1,7 +1,6 @@
 package com.sketchle.demo.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 
 import java.util.Optional;
 
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import com.sketchle.demo.dto.AuthErrorResponse;
 import com.sketchle.demo.dto.LoginRequest;
 import com.sketchle.demo.dto.LoginResponse;
 import com.sketchle.demo.dto.RegistrationRequest;

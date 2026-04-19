@@ -23,6 +23,8 @@ public class ThemeController {
 
     @GetMapping("/daily")
     public ResponseEntity<String> getDailyTheme() {
+        
+
         String theme = themeService.getCurrentTheme();
         if (theme == null) {
             return ResponseEntity.notFound().build();

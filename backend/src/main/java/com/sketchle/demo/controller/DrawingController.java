@@ -138,8 +138,14 @@ public class DrawingController {
                     .orElse(null);
 
             if (theme == null) {
-                return ResponseEntity.badRequest().body("No theme found for today!");
+                return ResponseEntity.badRequest().body("No theme found for today");
             }
+
+            Drawing existingDrawing = drawingRepository.findByUserAndThemeDate(user, LocalDate.now());
+            if (existingDrawing != null) {
+                return ResponseEntity.badRequest().body("You have already submitted a drawing today");
+            }
+
 
             byte[] imageBytes = file.getBytes();
             String imageUrl = storageService.uploadDrawing(imageBytes, username);
