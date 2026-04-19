@@ -3,6 +3,4 @@ builder = "nixpacks"
 
 [deploy]
 startCommand = "java -jar target/*.jar"
-healthcheckPath = "/api/theme/daily"
-healthcheckTimeout = 300
 restartPolicyType = "on_failure"
