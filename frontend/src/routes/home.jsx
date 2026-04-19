@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
@@ -13,46 +13,76 @@ export default function Home() {
     const [topDrawings, setTopDrawings] = useState([]);
     const [theme, setTheme] = useState("");
     const [submission, setSubmission] = useState(null)
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const loaderRef = useRef(null); 
+    const isFetchingRef = useRef(false);
     const { token } = useAuth();
 
-    useEffect(() => {
-        const fetchDrawings = async () => {
-            try {
-                const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-                const [todayRes, topRes, themeRes, submissionRes] = await Promise.all([
-                    api.get("/drawings/today", config), 
-                    api.get("/drawings/top", config), 
+    
+    const fetchDrawings = async (pageNum = 0) => {
+        if (isFetchingRef.current) return;
+        isFetchingRef.current = true;
+        setIsFetchingMore(true);
+        try {
+            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+            const [todayRes, topRes, themeRes, submissionRes] = await Promise.all([
+                api.get(`/drawings/today?page=${pageNum}&size=12`, config),
+                ...(pageNum === 0 ? [
+                    api.get("/drawings/top", config),
                     api.get("/theme/daily"),
                     api.get("/drawings/submission", config).catch(() => ({ data: null }))
-                ]);
+                ] : [
+                    Promise.resolve(null),
+                    Promise.resolve(null),
+                    Promise.resolve(null)
+                ])
+            ]);
 
-                if (themeRes.data) {
-                    setTheme(themeRes.data);
-                }
+            const newDrawings = todayRes.data?.content ?? [];
+            setDrawings(prev => pageNum === 0 ? newDrawings : [...prev, ...newDrawings]);
+            setHasMore(!todayRes.data.last); 
 
-                if (submissionRes && submissionRes.data) {
-                    setSubmission(submissionRes.data);
-                } else {
-                    setSubmission(null)
-                }
-
-                if (todayRes.data && Array.isArray(todayRes.data.content)) {
-                    setDrawings(todayRes.data.content);
-                }
-
-                if (Array.isArray(topRes.data)) {
-                    setTopDrawings(topRes.data);
-                }
-            } catch (err) {
-                setError("Could not load today's gallery.");
-                console.error(err);
-            } finally {
-                setIsLoading(false);
+            if (pageNum === 0) {
+                if (themeRes?.data) setTheme(themeRes.data);
+                if (submissionRes?.data) setSubmission(submissionRes.data);
+                else setSubmission(null);
+                if (Array.isArray(topRes?.data)) setTopDrawings(topRes.data);
             }
-        };
+        } catch (err) {
+            setError("Could not load today's gallery");
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+            setIsFetchingMore(false);
+            isFetchingRef.current = false;
+        }
+    };
 
-        fetchDrawings();
+    useEffect(() => {
+        fetchDrawings(0);
     }, [token]);
+
+    useEffect(() => {
+        if (isLoading) return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasMore && !isFetchingMore) {
+                    setIsFetchingMore(true);
+                    setPage(prev => {
+                        const nextPage = prev + 1;
+                        fetchDrawings(nextPage);
+                        return nextPage;
+                    });
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (loaderRef.current) observer.observe(loaderRef.current);
+        return () => observer.disconnect();
+    }, [isLoading]);
 
     const handleLike = async (drawingId) => {
         if (!token) return;
@@ -128,6 +158,18 @@ export default function Home() {
                     ))}
                 </div>
             )}
+            <div ref={loaderRef} className="py-10 text-center">
+                {isFetchingMore && (
+                    <div className="animate-pulse brutal-text tracking-widest text-indigo-400">
+                        LOADING MORE...
+                    </div>
+                )}
+                {!hasMore && drawings.length > 0 && (
+                    <p className="text-gray-600 text-sm uppercase tracking-widest">
+                        You've seen it all.
+                    </p>
+                )}
+            </div>
         </div>
     );
 }
