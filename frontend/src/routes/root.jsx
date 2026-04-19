@@ -5,6 +5,7 @@ import { FaUserPlus, FaSignInAlt, FaSignOutAlt, FaUserCircle } from "react-icons
 import Particles, { initParticlesEngine } from "@tsparticles/react"; 
 import { loadSlim } from "@tsparticles/slim";
 import logoMain from "../assets/logo-main.svg";
+import ScrollToTop from "../components/ScrollToTop";
 
 export default function Root() {
     const { token, logout, username } = useAuth(); 
@@ -128,6 +129,7 @@ export default function Root() {
             </nav>
 
             <main className="relative z-10 flex-grow overflow-y-auto custom-scrollbar">
+                <ScrollToTop/>
                 <div className="max-w-7xl mx-auto">
                     <Outlet />
                 </div>
