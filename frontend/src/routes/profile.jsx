@@ -37,6 +37,7 @@ export default function Profile() {
         try {
             const profileRes = await api.get(`/profiles/${urlUsername}`);
             setProfile(profileRes.data);
+            setEditBio(profileRes.data.bio)
 
             try {
                 const drawingsRes = await api.get(`/drawings/user/${urlUsername}`);
@@ -67,7 +68,7 @@ export default function Profile() {
         bio: editBio
       }, {headers: { Authorization: `Bearer ${token}` }})
 
-      if (editUsername !== loggedInUser) {
+      if (editUsername !== loggedInUser && editUsername.length > 0) {
         alert("Username changed! Please log in again for security.");
         navigate("/login");
         logout()
