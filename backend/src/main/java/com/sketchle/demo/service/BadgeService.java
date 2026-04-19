@@ -1,5 +1,7 @@
 package com.sketchle.demo.service;
 
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +27,13 @@ public class BadgeService {
         this.profileRepository = profileRepository;
     }
 
-    @PostConstruct // Does this on startup for the class
+    @EventListener(ApplicationReadyEvent.class) // Runs after everything is set up
+    @Transactional
     public void init() {
         try {
             awardMissedBadges();
         } catch (Exception e) {
-            System.err.println("Badge init failed, will retry on next request: " + e.getMessage());
+            System.err.println("Badge init failed: " + e.getMessage());
         }
     }
 
