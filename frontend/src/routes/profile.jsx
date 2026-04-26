@@ -190,7 +190,7 @@ export default function Profile() {
                       </div>
                   )}
 
-                  <img src={drawing.drawingUrl} className="w-full aspect-square  object-cover" />
+                  <img src={drawing.drawingUrl} className="w-full aspect-square pixelated object-cover" />
                   <div className="p-4">
                       <h3 className="font-bold text-lg truncate">{drawing.theme.word}</h3>
                       <p className="text-xs text-gray-500">{new Date(drawing.submittedAt).toLocaleDateString()}</p>
