@@ -11,7 +11,6 @@ import com.sketchle.demo.model.User;
 import com.sketchle.demo.repository.DrawingRepository;
 import com.sketchle.demo.repository.ProfileRepository;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;

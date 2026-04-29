@@ -43,8 +43,6 @@ class ThemeServiceTest {
     void testGetCurrentTheme_PicksNewWhenNotFound() {
         when(themeRepository.findById(LocalDate.now())).thenReturn(Optional.empty());
         when(themeRepository.findAll()).thenReturn(Collections.emptyList());
-
-        String result = themeService.getCurrentTheme();
         verify(themeRepository, times(1)).save(any(DailyTheme.class));
     }
 }
