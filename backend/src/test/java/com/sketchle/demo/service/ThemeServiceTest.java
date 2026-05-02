@@ -10,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +43,8 @@ class ThemeServiceTest {
     @Test
     void testGetCurrentTheme_PicksNewWhenNotFound() {
         when(themeRepository.findById(LocalDate.now())).thenReturn(Optional.empty());
-        when(themeRepository.findAll()).thenReturn(Collections.emptyList());
+        when(themeRepository.findAll()).thenReturn(List.of(new DailyTheme(LocalDate.now().minusDays(1), "Old Theme")));
+        themeService.getCurrentTheme();
         verify(themeRepository, times(1)).save(any(DailyTheme.class));
     }
 }
